@@ -1,0 +1,31 @@
+{
+  "name": "@assethub/client-sdk",
+  "version": "1.0.0",
+  "description": "Cross-platform Client SDK for Asset Hub (React & React Native)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "assets",
+    "management",
+    "sdk",
+    "react",
+    "react-native",
+    "expo"
+  ],
+  "author": "Mudassir Malik",
+  "license": "MIT",
+  "dependencies": {
+    "cross-fetch": "^4.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
