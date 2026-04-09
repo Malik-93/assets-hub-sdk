@@ -13,13 +13,38 @@ yarn add Malik-93/assets-hub-sdk
 
 ## Initialization
 
+You can initialize the client by simply passing your configuration. The `baseUrl` is managed automatically using a 3-tier priority system.
+
+### Option 1: Zero Configuration (Recommended)
+If the SDK was built with a default URL or if you have environment variables set, you can initialize with an empty object (or just your API key).
+
 ```typescript
 import { AssetHubClient } from '@assethub/client-sdk';
 
+// Automatically picks up the injected or environment base URL
+const client = new AssetHubClient({});
+```
+
+### Option 2: Manual Configuration
+```typescript
 const client = new AssetHubClient({
   baseUrl: 'https://your-server-url.com',
+  apiKey: 'your-api-key', // Optional
 });
 ```
+
+## Configuration & Security
+
+The SDK resolves the `baseUrl` using the following priority:
+1. **Explicit Config**: `baseUrl` passed in the constructor.
+2. **Environment Variables**: `ASSET_HUB_BASE_URL` or `NEXT_PUBLIC_ASSET_HUB_BASE_URL`.
+3. **Build-time Injection**: A default URL "baked" into the package via GitHub Secrets.
+
+### GitHub Secrets Setup
+To avoid exposing your server URL in source code, you can use GitHub Secrets in your repository:
+1. Go to **Settings > Secrets and variables > Actions**.
+2. Create a secret named `ASSET_HUB_BASE_URL`.
+3. The build process will automatically inject this URL into the final package.
 
 ## Usage Examples
 

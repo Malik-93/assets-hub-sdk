@@ -1,12 +1,25 @@
 import fetch from 'cross-fetch';
 import { Asset, ApiResponse, ClientConfig, Project, UploadOptions } from './types';
 
+const DEFAULT_BASE_URL = "__ASSET_HUB_BASE_URL_PLACEHOLDER__";
+
 export class AssetHubClient {
   private baseUrl: string;
   private apiKey?: string;
 
   constructor(config: ClientConfig) {
-    this.baseUrl = config.baseUrl.endsWith('/') ? config.baseUrl.slice(0, -1) : config.baseUrl;
+    const baseUrl = config.baseUrl || 
+                    (typeof process !== 'undefined' ? process.env?.ASSET_HUB_BASE_URL : undefined) || 
+                    (typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_ASSET_HUB_BASE_URL : undefined) ||
+                    (DEFAULT_BASE_URL.startsWith('http') ? DEFAULT_BASE_URL : undefined);
+
+    if (!baseUrl) {
+      throw new Error(
+        'AssetHubClient Error: baseUrl is required. Provide it in the config, set ASSET_HUB_BASE_URL, or ensure the SDK was built with a default URL.'
+      );
+    }
+
+    this.baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     this.apiKey = config.apiKey;
   }
 

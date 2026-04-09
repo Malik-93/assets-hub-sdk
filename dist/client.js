@@ -5,9 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetHubClient = void 0;
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
+const DEFAULT_BASE_URL = "https://my-injected-server.com";
 class AssetHubClient {
     constructor(config) {
-        this.baseUrl = config.baseUrl.endsWith('/') ? config.baseUrl.slice(0, -1) : config.baseUrl;
+        const baseUrl = config.baseUrl ||
+            (typeof process !== 'undefined' ? process.env?.ASSET_HUB_BASE_URL : undefined) ||
+            (typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_ASSET_HUB_BASE_URL : undefined) ||
+            (DEFAULT_BASE_URL.startsWith('http') ? DEFAULT_BASE_URL : undefined);
+        if (!baseUrl) {
+            throw new Error('AssetHubClient Error: baseUrl is required. Provide it in the config, set ASSET_HUB_BASE_URL, or ensure the SDK was built with a default URL.');
+        }
+        this.baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
         this.apiKey = config.apiKey;
     }
     async request(path, options = {}) {
