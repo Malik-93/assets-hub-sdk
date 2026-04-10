@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetHubClient = void 0;
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
-const DEFAULT_BASE_URL = "__ASSET_HUB_BASE_URL_PLACEHOLDER__";
+const DEFAULT_BASE_URL = "https://kathleen-unwindy-thickly.ngrok-free.dev";
 class AssetHubClient {
     /**
      * Initialize the Asset Hub Client.
@@ -107,22 +107,6 @@ class AssetHubClient {
      */
     getAssetUrl(id) {
         return `${this.baseUrl}/api/assets/${id}`;
-    }
-    // --- API Key Management ---
-    async listApiKeys() {
-        return this.request('/api/keys');
-    }
-    async generateApiKey(name, rootFolderId) {
-        return this.request('/api/keys', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, rootFolderId }),
-        });
-    }
-    async deleteApiKey(id) {
-        return this.request(`/api/keys/${id}`, {
-            method: 'DELETE',
-        });
     }
 }
 exports.AssetHubClient = AssetHubClient;

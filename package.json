@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "inject-secrets": "node scripts/inject-secrets.js",
-    "build": "npm run inject-secrets && tsc",
+    "build": "npm run inject-secrets && tsc && npm run inject-secrets -- --revert",
     "prepare": "npm run build"
   },
   "keywords": [

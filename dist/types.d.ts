@@ -13,13 +13,6 @@ export interface ApiResponse<T> {
     data?: T;
     message?: string;
 }
-export interface ApiKeyRecord {
-    id: string;
-    key: string;
-    name: string;
-    rootFolderId: string;
-    createdAt: string;
-}
 export interface ClientConfig {
     baseUrl: string;
     apiKey?: string;

@@ -32,7 +32,4 @@ export declare class AssetHubClient {
      * Helper to get the absolute proximity URL for an asset ID
      */
     getAssetUrl(id: string): string;
-    listApiKeys(): Promise<import('./types').ApiKeyRecord[]>;
-    generateApiKey(name: string, rootFolderId: string): Promise<import('./types').ApiKeyRecord>;
-    deleteApiKey(id: string): Promise<void>;
 }
