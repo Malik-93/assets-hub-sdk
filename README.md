@@ -29,9 +29,17 @@ const client = new AssetHubClient({});
 ```typescript
 const client = new AssetHubClient({
   baseUrl: 'https://your-server-url.com',
-  apiKey: 'your-api-key', // Optional
+  apiKey: 'your-generated-api-key', // Essential for multi-tenant isolation
 });
 ```
+
+## Multi-Tenant Isolation (Important)
+
+The Asset Hub now uses a database-backed API key system. Every API key is linked to a specific **Root Folder ID** on Google Drive. 
+
+- When you use an API key, the SDK will only interact with the assets and folders inside that specific client's root folder.
+- Requests without a valid key will be rejected with a `401 Unauthorized` error.
+- You can generate and manage these keys via the Asset Hub Dashboard or directly through this SDK using the management methods below.
 
 ## Configuration & Security
 
@@ -101,3 +109,4 @@ await client.deleteAsset('asset-id');
 - `uploadAsset(file, options)`: Uploads a file.
 - `deleteAsset(id)`: Deletes a file.
 - `getAssetUrl(id)`: Returns the proxied download URL.
+

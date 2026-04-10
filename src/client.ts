@@ -7,6 +7,17 @@ export class AssetHubClient {
   private baseUrl: string;
   private apiKey?: string;
 
+  /**
+   * Initialize the Asset Hub Client.
+   * Authentication is required for multi-tenant data isolation.
+   * 
+   * Base URL Priority:
+   * 1. Explicit config.baseUrl
+   * 2. ASSET_HUB_BASE_URL (Environment variable)
+   * 3. Default build-time URL
+   * 
+   * @param config.apiKey Essential for isolation. Get this from the Asset Hub Dashboard.
+   */
   constructor(config: ClientConfig) {
     const baseUrl = config.baseUrl || 
                     (typeof process !== 'undefined' ? process.env?.ASSET_HUB_BASE_URL : undefined) || 

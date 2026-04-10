@@ -5,8 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetHubClient = void 0;
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
-const DEFAULT_BASE_URL = "https://my-injected-server.com";
+const DEFAULT_BASE_URL = "__ASSET_HUB_BASE_URL_PLACEHOLDER__";
 class AssetHubClient {
+    /**
+     * Initialize the Asset Hub Client.
+     * Authentication is required for multi-tenant data isolation.
+     *
+     * Base URL Priority:
+     * 1. Explicit config.baseUrl
+     * 2. ASSET_HUB_BASE_URL (Environment variable)
+     * 3. Default build-time URL
+     *
+     * @param config.apiKey Essential for isolation. Get this from the Asset Hub Dashboard.
+     */
     constructor(config) {
         const baseUrl = config.baseUrl ||
             (typeof process !== 'undefined' ? process.env?.ASSET_HUB_BASE_URL : undefined) ||
@@ -96,6 +107,22 @@ class AssetHubClient {
      */
     getAssetUrl(id) {
         return `${this.baseUrl}/api/assets/${id}`;
+    }
+    // --- API Key Management ---
+    async listApiKeys() {
+        return this.request('/api/keys');
+    }
+    async generateApiKey(name, rootFolderId) {
+        return this.request('/api/keys', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, rootFolderId }),
+        });
+    }
+    async deleteApiKey(id) {
+        return this.request(`/api/keys/${id}`, {
+            method: 'DELETE',
+        });
     }
 }
 exports.AssetHubClient = AssetHubClient;
