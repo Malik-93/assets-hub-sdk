@@ -46,7 +46,9 @@ If the SDK was built with a default URL or if you have environment variables set
 import { AssetHubClient } from '@assethub/client-sdk';
 
 // Automatically picks up the injected or environment base URL
-const client = new AssetHubClient({});
+const client = new AssetHubClient({
+  apiKey: 'your-generated-api-key'
+});
 ```
 
 ### Option 2: Manual Configuration
@@ -59,64 +61,39 @@ const client = new AssetHubClient({
 
 ## Multi-Tenant Isolation (Important)
 
-The Asset Hub now uses a database-backed API key system. Every API key is linked to a specific **Root Folder ID** on Google Drive. 
+The Asset Hub uses a database-backed API key system. Every API key is **uniquely linked to a specific Folder ID** on Google Drive. 
 
-- When you use an API key, the SDK will only interact with the assets and folders inside that specific client's root folder.
+- When you use an API key, the SDK defaults to interacting with assets inside that specific folder.
+- **No Manual Mapping Required**: You no longer need to pass a `rootFolderId` or `folderId` for top-level operations. The backend automatically identifies the target folder from your `apiKey`.
 - Requests without a valid key will be rejected with a `401 Unauthorized` error.
-- You can generate and manage these keys via the Asset Hub Dashboard or directly through this SDK using the management methods below.
-
-## Configuration & Security
-
-The SDK resolves the `baseUrl` using the following priority:
-1. **Explicit Config**: `baseUrl` passed in the constructor.
-2. **Environment Variables**: `ASSET_HUB_BASE_URL` or `NEXT_PUBLIC_ASSET_HUB_BASE_URL`.
-3. **Build-time Injection**: A default URL "baked" into the package via GitHub Secrets.
-
-### GitHub Secrets Setup
-To avoid exposing your server URL in source code, you can use GitHub Secrets in your repository:
-1. Go to **Settings > Secrets and variables > Actions**.
-2. Create a secret named `ASSET_HUB_BASE_URL`.
-3. The build process will automatically inject this URL into the final package.
 
 ## Usage Examples
 
-### 1. List Projects
+### 1. List Sub-Folders
 ```typescript
-const projects = await client.listProjects();
-console.log(projects);
+const folders = await client.listFolders();
+console.log(folders);
 ```
 
-### 2. Upload Asset (Web)
+### 2. List Assets (Default Folder)
 ```typescript
-const handleUpload = async (file: File) => {
-  const asset = await client.uploadAsset(file, { folderId: 'folder-id' });
-  console.log('Uploaded:', asset.url);
-};
+// Lists all assets in the folder linked to your API key
+const assets = await client.listAssets();
 ```
 
-### 3. Upload Asset (React Native / Expo)
+### 3. Upload Asset (Standard Web / Mobile)
 ```typescript
-import * as ImagePicker from 'expo-image-picker';
-
-const pickImage = async () => {
-  let result = await ImagePicker.launchImageLibraryAsync({
-    allowsEditing: true,
-    quality: 1,
-  });
-
-  if (!result.canceled) {
-    const file = {
-      uri: result.assets[0].uri,
-      name: 'upload.jpg',
-      type: 'image/jpeg',
-    };
-    const asset = await client.uploadAsset(file);
-    console.log('Mobile Upload Success:', asset.url);
-  }
-};
+// Uploads directly to the folder linked to your API key
+const asset = await client.uploadAsset(file);
+console.log('Uploaded:', asset.url);
 ```
 
-### 4. Delete Asset
+### 4. Upload to a Specific Sub-Folder
+```typescript
+const asset = await client.uploadAsset(file, { folderId: 'sub-folder-id' });
+```
+
+### 5. Delete Asset
 ```typescript
 await client.deleteAsset('asset-id');
 ```
@@ -125,10 +102,10 @@ await client.deleteAsset('asset-id');
 
 ### `AssetHubClient`
 
-- `listProjects()`: Returns all folders.
-- `createProject(name)`: Creates a new folder.
-- `renameProject(id, name)`: Renames a folder.
-- `deleteProject(id)`: Deletes a folder and all contents.
+- `listFolders()`: Returns all sub-folders within the client's root.
+- `createFolder(name)`: Creates a new sub-folder.
+- `renameFolder(id, name)`: Renames a folder.
+- `deleteFolder(id)`: Deletes a folder and all contents.
 - `listAssets({ folderId })`: List files.
 - `uploadAsset(file, options)`: Uploads a file.
 - `deleteAsset(id)`: Deletes a file.

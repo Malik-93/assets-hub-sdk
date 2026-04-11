@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { Asset, ApiResponse, ClientConfig, Project, UploadOptions } from './types';
+import { Asset, ApiResponse, ClientConfig, Folder, UploadOptions } from './types';
 
 const DEFAULT_BASE_URL = "__ASSET_HUB_BASE_URL_PLACEHOLDER__";
 
@@ -54,36 +54,51 @@ export class AssetHubClient {
     return result.data as T;
   }
 
-  // --- Projects ---
-
-  async listProjects(): Promise<Project[]> {
-    return this.request<Project[]>('/api/assets/projects');
+  // --- Folders ---
+  /**
+   * List all folders in the root.
+   */
+  async listFolders(): Promise<Folder[]> {
+    return this.request<Folder[]>('/api/assets/folders');
   }
 
-  async createProject(name: string): Promise<Project> {
-    return this.request<Project>('/api/assets/projects', {
+  /**
+   * Create a new folder.
+   */
+  async createFolder(name: string): Promise<Folder> {
+    return this.request<Folder>('/api/assets/folders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
   }
 
-  async renameProject(id: string, name: string): Promise<Project> {
-    return this.request<Project>(`/api/assets/projects/${id}`, {
+  /**
+   * Rename a folder.
+   */
+  async renameFolder(id: string, name: string): Promise<Folder> {
+    return this.request<Folder>(`/api/assets/folders/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
   }
 
-  async deleteProject(id: string): Promise<void> {
-    return this.request<void>(`/api/assets/projects/${id}`, {
+  /**
+   * Delete a folder and all its contents.
+   */
+  async deleteFolder(id: string): Promise<void> {
+    return this.request<void>(`/api/assets/folders/${id}`, {
       method: 'DELETE',
     });
   }
 
   // --- Assets ---
 
+  /**
+   * List assets.
+   * @param options.folderId Optional. If not provided, lists assets in the folder linked to the API key.
+   */
   async listAssets(options: { folderId?: string } = {}): Promise<Asset[]> {
     const query = options.folderId ? `?folderId=${options.folderId}` : '';
     return this.request<Asset[]>(`/api/assets${query}`);
@@ -92,6 +107,8 @@ export class AssetHubClient {
   /**
    * Upload an asset.
    * Supports Web (File/Blob) and React Native ({ uri, type, name })
+   * @param file The file to upload.
+   * @param options.folderId Optional. If not provided, uploads to the folder linked to the API key.
    */
   async uploadAsset(file: any, options: UploadOptions = {}): Promise<Asset> {
     const formData = new FormData();
