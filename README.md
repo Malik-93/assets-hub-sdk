@@ -11,42 +11,20 @@ npm install Malik-93/assets-hub-sdk
 yarn add Malik-93/assets-hub-sdk
 ```
 
-## Local Development Workflow
-
-Since GitHub Actions may be unavailable, this SDK uses a **Local Secret Injection** system. This ensures that the production building process is automated and secure.
-
-### 1. Setup
-Create a `.env` file in the root of the project:
-```env
-ASSET_HUB_BASE_URL=https://your-server-url.com
-```
-
-### 2. Automatic Build & Injection
-The project is configured to automatically:
-1.  Inject the URL from your `.env` into the code.
-2.  Build the project (`dist/` folder).
-3.  Revert your source code (`src/` folder) back to its clean state.
-
-This happens automatically:
-*   **On Push**: A Git Hook runs `npm run build` whenever you `git push`.
-*   **On Publish**: `npm publish` triggers the `prepare` script.
-*   **Manually**: Run `npm run build`.
-
-### 3. Security
-Your server URL is **never** committed to Git. The `scripts/inject-secrets.js` script ensures that only the compiled files in `dist/` contain the real URL, while `src/client.ts` remains clean with a placeholder.
-
 ## Initialization
 
 You can initialize the client by simply passing your configuration. The `baseUrl` is managed automatically using a 3-tier priority system.
 
 ### Option 1: Zero Configuration (Recommended)
-If the SDK was built with a default URL or if you have environment variables set, you can initialize with an empty object (or just your API key).
+If the SDK was built with a default URL or if you have environment variables set, you can initialize without a baseUrl by adding just your API key.
 
 ```typescript
 import { AssetHubClient } from '@assethub/client-sdk';
 
 // Automatically picks up the injected or environment base URL
-const client = new AssetHubClient({});
+const client = new AssetHubClient({
+  apiKey: 'your-generated-api-key', // Essential for multi-tenant isolation
+});
 ```
 
 ### Option 2: Manual Configuration
