@@ -44,30 +44,46 @@ class AssetHubClient {
         }
         return result.data;
     }
-    // --- Projects ---
-    async listProjects() {
-        return this.request('/api/assets/projects');
+    // --- Folders ---
+    /**
+     * List all folders in the root.
+     */
+    async listFolders() {
+        return this.request('/api/assets/folders');
     }
-    async createProject(name) {
-        return this.request('/api/assets/projects', {
+    /**
+     * Create a new folder.
+     */
+    async createFolder(name) {
+        return this.request('/api/assets/folders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name }),
         });
     }
-    async renameProject(id, name) {
-        return this.request(`/api/assets/projects/${id}`, {
+    /**
+     * Rename a folder.
+     */
+    async renameFolder(id, name) {
+        return this.request(`/api/assets/folders/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name }),
         });
     }
-    async deleteProject(id) {
-        return this.request(`/api/assets/projects/${id}`, {
+    /**
+     * Delete a folder and all its contents.
+     */
+    async deleteFolder(id) {
+        return this.request(`/api/assets/folders/${id}`, {
             method: 'DELETE',
         });
     }
     // --- Assets ---
+    /**
+     * List assets.
+     * @param options.folderId Optional. If not provided, lists assets in the folder linked to the API key.
+     */
     async listAssets(options = {}) {
         const query = options.folderId ? `?folderId=${options.folderId}` : '';
         return this.request(`/api/assets${query}`);
@@ -75,6 +91,8 @@ class AssetHubClient {
     /**
      * Upload an asset.
      * Supports Web (File/Blob) and React Native ({ uri, type, name })
+     * @param file The file to upload.
+     * @param options.folderId Optional. If not provided, uploads to the folder linked to the API key.
      */
     async uploadAsset(file, options = {}) {
         const formData = new FormData();

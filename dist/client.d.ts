@@ -1,4 +1,4 @@
-import { Asset, ClientConfig, Project, UploadOptions } from './types';
+import { Asset, ClientConfig, Folder, UploadOptions } from './types';
 export declare class AssetHubClient {
     private baseUrl;
     private apiKey?;
@@ -15,16 +15,34 @@ export declare class AssetHubClient {
      */
     constructor(config: ClientConfig);
     private request;
-    listProjects(): Promise<Project[]>;
-    createProject(name: string): Promise<Project>;
-    renameProject(id: string, name: string): Promise<Project>;
-    deleteProject(id: string): Promise<void>;
+    /**
+     * List all folders in the root.
+     */
+    listFolders(): Promise<Folder[]>;
+    /**
+     * Create a new folder.
+     */
+    createFolder(name: string): Promise<Folder>;
+    /**
+     * Rename a folder.
+     */
+    renameFolder(id: string, name: string): Promise<Folder>;
+    /**
+     * Delete a folder and all its contents.
+     */
+    deleteFolder(id: string): Promise<void>;
+    /**
+     * List assets.
+     * @param options.folderId Optional. If not provided, lists assets in the folder linked to the API key.
+     */
     listAssets(options?: {
         folderId?: string;
     }): Promise<Asset[]>;
     /**
      * Upload an asset.
      * Supports Web (File/Blob) and React Native ({ uri, type, name })
+     * @param file The file to upload.
+     * @param options.folderId Optional. If not provided, uploads to the folder linked to the API key.
      */
     uploadAsset(file: any, options?: UploadOptions): Promise<Asset>;
     deleteAsset(id: string): Promise<void>;

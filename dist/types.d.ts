@@ -1,4 +1,4 @@
-export interface Project {
+export interface Folder {
     id: string;
     name: string;
 }
